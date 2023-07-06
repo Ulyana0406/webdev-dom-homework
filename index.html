@@ -39,7 +39,7 @@
       const commentInput = document.querySelector('#comment-input')
       const addButton = document.querySelector('#add-button')
       const commentsBox = document.querySelector('#comments-box')
-     
+
       // переводим список комментов в массив
       const commentsList = [
           {
@@ -98,7 +98,7 @@
 
       // Функция создания ответа на комментарий
       const initCommentAnswerListeners = () => {
-          const commentAnswer = document.querySelectorAll(".comment-text")
+          const commentAnswer = document.querySelector(".comment-text")
           commentAnswer.forEach((answer, index) => {
               answer.addEventListener('click', () => {
                 if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
@@ -134,7 +134,7 @@ ${commentsList[index].commentText}←
       //Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
       //Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
       const initEditButtonsListeners = () => {
-          const editButtons = document.querySelectorAll('#edit-button')
+          const editButtons = document.querySelectorAll('.add-form-button')
           editButtons.forEach((editButton, index) => {
               editButton.addEventListener('click', () => {
                   const editCommentText = document.querySelector('.comment-edit')
