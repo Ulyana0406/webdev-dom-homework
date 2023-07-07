@@ -41,7 +41,37 @@
       const commentsBox = document.querySelector('#comments-box')
       //const currentTime = new Date();
       //const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
-      
+      const renderCommentList = () => {
+        const commentsHtml = comments.map((comment, index) => {
+              return `<li class="comment">
+                    <div class="comment-header">
+                      <div>${comments.name}</div>
+                      <div>${comments.date}</div>
+                    </div>
+                    <div class="comment-body">
+                      <div data-answer='${index}' class="comment-text">
+                        ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.text}</textarea>` : `${comments.text}` }
+                      </div>
+                      <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
+                    </div>
+                    <div class="comment-footer">
+                      <div class="likes">
+                        <span class="likes-counter">${comments.likes}</span>
+                        <button data-like='${index}' class="like-button ${(comments.isLiked) ? `-active-like` : ''}"></button>
+                      </div>
+                    </div>
+              </li>    
+              `
+          }).join('')
+          
+
+          commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
+          
+
+          initLikeButtonsListeners();
+          //initEditButtonsListeners();
+          initCommentAnswerListeners();
+      }
       function getCommentList(){
   const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
   method: "GET"
@@ -72,6 +102,40 @@ getCommentList()
 
 let comments =[]
 
+const Sendingcomment = ()=>{
+        const sanitizeHtml= (htmlString)=>{
+        return htmlString
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+        };
+        getCommentList();
+        function addComment() {
+
+          const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
+  method: "POST",
+  body: JSON.stringify({
+  date: new Date(),
+  likes:0,
+  isLiked: false,
+  text: sanitizeHtml(commentInput.value),
+  name: sanitizeHtml(nameInput.value),
+  }),
+}).then((response)=>{
+  response.join().then((responseData)=>{
+    getCommentList();
+  });
+});
+renderCommentList();
+
+      }
+      addComment();
+      nameInput.value="";
+      commentInput.value="";
+      } 
+      
+      addComment();
       // переводим список комментов в массив
       //const commentsList = [
          // {
@@ -96,38 +160,7 @@ let comments =[]
       //ВСЕ ЧТО СВЯЗАНО С РЕНДЕРОМ И СОЗДАНИЕМ КОЛЛЕКЦИЙ В ДИНАМИЧЕСКИХ ЭЛЕМЕНТАХ
 
       // рендерим наш массив в HTML
-      const renderCommentList = () => {
-        const commentsHtml = comments.map((comments, index) => {
-              return `<li class="comment">
-                    <div class="comment-header">
-                      <div>${comments.userName}</div>
-                      <div>${comments.currDate}</div>
-                    </div>
-                    <div class="comment-body">
-                      <div data-answer='${index}' class="comment-text">
-                        ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.commentText}</textarea>` : `${comments.commentText}` }
-                      </div>
-                      <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
-                    </div>
-                    <div class="comment-footer">
-                      <div class="likes">
-                        <span class="likes-counter">${comments.likeCounter}</span>
-                        <button data-like='${index}' class="like-button ${(comments.isLike) ? `-active-like` : ''}"></button>
-                      </div>
-                    </div>
-              </li>    
-              `
-          }).join('')
-          
-
-          commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
-          
-
-          initLikeButtonsListeners();
-          initEditButtonsListeners();
-          initCommentAnswerListeners();
-      }
-
+     
       // Функция создания ответа на комментарий
       const initCommentAnswerListeners = () => {
         const commentAnswer = document.querySelectorAll(".comment-text") 
@@ -149,12 +182,12 @@ ${comments[index].commentText}←
           const likeButtons = document.querySelectorAll('.like-button')
           likeButtons.forEach((likeButton, index) => {
               likeButton.addEventListener('click', () => {
-                  if (commentsList[index].isLike === false ) {
-                      commentsList[index].isLike = true;
-                      commentsList[index].likeCounter += 1
+                  if (comments[index].isLiked === false ) {
+                      comments[index].isLiked = true;
+                      comments[index].likeCounter += 1
                   } else {
-                      commentsList[index].isLike = false;
-                      commentsList[index].likeCounter -= 1
+                      comments[index].isLiked = false;
+                      comments[index].likeCounter -= 1
                       
                   }
 
@@ -164,27 +197,27 @@ ${comments[index].commentText}←
       }
       //Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
       //Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
-      const initEditButtonsListeners = () => {
-          const editButtons = document.querySelectorAll('.add-form-button')
-          editButtons.forEach((editButton, index) => {
-              editButton.addEventListener('click', () => {
-                  const editCommentText = document.querySelector('.comment-edit')
-                if (commentsList[index].isEdit) {           
-                  if (!editCommentText.value == '') {
-                      commentsList[index].isEdit = false
-                      commentsList[index].commentText = editCommentText.value
-                  } else {
-                      commentsList[index].isEdit = false
-                      commentsList[index].commentText = "Комментарий не может быть пустым"
-                  }
-                } else {            
-                  commentsList[index].isEdit = true
-                }
+      //const initEditButtonsListeners = () => {
+          //const editButtons = document.querySelectorAll('.add-form-button')
+          //editButtons.forEach((editButton, index) => {
+             // editButton.addEventListener('click', () => {
+                //  const editCommentText = document.querySelector('.comment-edit')
+                //if (comments[index].isEdit) {           
+                 // if (!editCommentText.value == '') {
+                    //  comments[index].isEdit = false
+                    //  comments[index].commentText = editCommentText.value
+                 // } else {
+                  //    comments[index].isEdit = false
+                  //    comments[index].commentText = "Комментарий не может быть пустым"
+                //  }
+              //  } else {            
+                 // comments[index].isEdit = true
+              //  }
                 
-                renderCommentList();
-              })
-          })
-      }
+             //   renderCommentList();
+          //    })
+       //   })
+     // }
 
       //РЕНДЕРИМ НАШ СПИСОК КОММЕНТАРИЕВ
       renderCommentList();
@@ -246,51 +279,9 @@ ${comments[index].commentText}←
           addButton.classList.add('add-form-button_disable')
       })
 
-      // Обработка нажатия на enter
-      window.addEventListener('keyup',(event) => {
-          if (event.code == 'Enter' || event.code == 'NumpadEnter') {
-              if (!nameInput.value == '' && !commentInput.value == ''){
-                  addComment()
-                  renderCommentList()
-                  nameInput.value = ''
-                  commentInput.value = ''
-                  addButton.classList.add('add-form-button_disable')
-              }
-          }
-      });
+     
 
-      const Sendingcomment = ()=>{
-        const sanitizeHtml= (htmlString)=>{
-        return htmlString
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-        };
-        getCommentList();
-        function addComment() {
-
-          const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
-  method: "POST",
-  body: JSON.stringify({
-  date: new Date(),
-  likes:0,
-  isLiked: false,
-  text: sanitizeHtml(commentInput.value),
-  name: sanitizeHtml(nameInput.value),
-  }),
-}).then((response)=>{
-  response.join().then((responseData)=>{
-    getCommentList();
-  });
-});
-renderCommentList();
-
-      }
-      addComment();
-      nameInput.value="";
-      commentInput.value="";
-      }      
+     
       
 
      
