@@ -45,19 +45,19 @@
         const commentsHtml = comments.map((comment, index) => {
               return `<li class="comment">
                     <div class="comment-header">
-                      <div>${comments.name}</div>
-                      <div>${comments.date}</div>
+                      <div>${comment.name}</div>
+                      <div>${comment.date}</div>
                     </div>
                     <div class="comment-body">
                       <div data-answer='${index}' class="comment-text">
-                        ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.text}</textarea>` : `${comments.text}` }
+                        ${(comment.isEdit) ? `<textarea class="comment-edit">${comment.text}</textarea>` : `${comment.text}` }
                       </div>
-                      <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
+                      <button id='edit-button' data-index='${index}' class="add-form-button">${comment.isEdit ? `Сохранить` : 'Редактировать'}</button>
                     </div>
                     <div class="comment-footer">
                       <div class="likes">
-                        <span class="likes-counter">${comments.likes}</span>
-                        <button data-like='${index}' class="like-button ${(comments.isLiked) ? `-active-like` : ''}"></button>
+                        <span class="likes-counter">${comment.likes}</span>
+                        <button data-like='${index}' class="like-button ${(comment.isLiked) ? `-active-like` : ''}"></button>
                       </div>
                     </div>
               </li>    
@@ -69,9 +69,12 @@
           
 
           initLikeButtonsListeners();
-          //initEditButtonsListeners();
+          initEditButtonsListeners();
           initCommentAnswerListeners();
       }
+
+      let comments =[]
+      
       function getCommentList(){
   const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
   method: "GET"
@@ -85,7 +88,7 @@ jsonPromise.then((responseData) => {
 console.log (responseData);
 const appComments= responseData.comments.map((comment) =>{
 return{
-  date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
+date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
 likes:comment.likes,
 isLiked: false,
 text: comment.text,
@@ -100,7 +103,7 @@ renderCommentList();
 }
 getCommentList()
 
-let comments =[]
+
 
 const Sendingcomment = ()=>{
         const sanitizeHtml= (htmlString)=>{
@@ -135,7 +138,7 @@ renderCommentList();
       commentInput.value="";
       } 
       
-      addComment();
+     
       // переводим список комментов в массив
       //const commentsList = [
          // {
@@ -196,28 +199,28 @@ ${comments[index].commentText}←
           })
       }
       //Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
-      //Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
-      //const initEditButtonsListeners = () => {
-          //const editButtons = document.querySelectorAll('.add-form-button')
-          //editButtons.forEach((editButton, index) => {
-             // editButton.addEventListener('click', () => {
-                //  const editCommentText = document.querySelector('.comment-edit')
-                //if (comments[index].isEdit) {           
-                 // if (!editCommentText.value == '') {
-                    //  comments[index].isEdit = false
-                    //  comments[index].commentText = editCommentText.value
-                 // } else {
-                  //    comments[index].isEdit = false
-                  //    comments[index].commentText = "Комментарий не может быть пустым"
-                //  }
-              //  } else {            
-                 // comments[index].isEdit = true
-              //  }
+     // Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
+      const initEditButtonsListeners = () => {
+          const editButtons = document.querySelectorAll('.add-form-button')
+          editButtons.forEach((editButton, index) => {
+              editButton.addEventListener('click', () => {
+                  const editCommentText = document.querySelector('.comment-edit')
+                if (comments[index].isEdit) {           
+                  if (!editCommentText.value == '') {
+                     comments[index].isEdit = false
+                      comments[index].commentText = editCommentText.value
+                  } else {
+                      comments[index].isEdit = false
+                      comments[index].commentText = "Комментарий не может быть пустым"
+                  }
+                } else {            
+                  comments[index].isEdit = true
+                }
                 
-             //   renderCommentList();
-          //    })
-       //   })
-     // }
+                renderCommentList();
+             })
+          })
+      }
 
       //РЕНДЕРИМ НАШ СПИСОК КОММЕНТАРИЕВ
       renderCommentList();
