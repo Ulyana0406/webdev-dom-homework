@@ -133,9 +133,13 @@ const Sendingcomment = ()=>{
 renderCommentList();
 
       }
-      addComment();
-      nameInput.value="";
-      commentInput.value="";
+      addButton.addEventListener('click', () => {
+          addComment()
+          renderCommentList()
+          nameInput.value = ''
+          commentInput.value = ''
+          addButton.classList.add('add-form-button_disable')
+      })
       } 
       
      
@@ -172,7 +176,7 @@ renderCommentList();
                 if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
                   commentInput.value = `→${comments[index].userName}
 
-${comments[index].commentText}←
+${comment[index].text}←
 `
                 }
               })
@@ -187,10 +191,10 @@ ${comments[index].commentText}←
               likeButton.addEventListener('click', () => {
                   if (comments[index].isLiked === false ) {
                       comments[index].isLiked = true;
-                      comments[index].likeCounter += 1
+                      comments[index].likes += 1
                   } else {
                       comments[index].isLiked = false;
-                      comments[index].likeCounter -= 1
+                      comments[index].likes -= 1
                       
                   }
 
@@ -208,10 +212,10 @@ ${comments[index].commentText}←
                 if (comments[index].isEdit) {           
                   if (!editCommentText.value == '') {
                      comments[index].isEdit = false
-                      comments[index].commentText = editCommentText.value
+                      comments[index].text = editCommentText.value
                   } else {
                       comments[index].isEdit = false
-                      comments[index].commentText = "Комментарий не может быть пустым"
+                      comments[index].text = "Комментарий не может быть пустым"
                   }
                 } else {            
                   comments[index].isEdit = true
@@ -274,13 +278,7 @@ ${comments[index].commentText}←
       })
 
       //логика кнопки добавления комментария
-      addButton.addEventListener('click', () => {
-          addComment()
-          renderCommentList()
-          nameInput.value = ''
-          commentInput.value = ''
-          addButton.classList.add('add-form-button_disable')
-      })
+      
 
      
 
