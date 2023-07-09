@@ -78,10 +78,10 @@
 const startAt=Date.now();
 console.log('Начинаем делать запрос')
 
-addButton.disabled= true;
-addButton.textContent="Элемент добавляется...";
+
 function getCommentList(){
-   
+  addButton.disabled= true;
+   addButton.textContent="Элемент добавляется...";
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
         method: "GET"
       }).then((response) => {
@@ -105,7 +105,10 @@ name: comment.author.name,
 });
 comments= appComments;
 renderCommentList();
-})
+}).then((data)=>{
+  addButton.disabled= false;
+  addButton.textContent="Написать";
+});
 
 }
 getCommentList()
@@ -141,10 +144,7 @@ getCommentList();
 .then((response)=>{
   console.log('Время:'+ (Date.now()-startAt));
   return response;
-}).then((data)=>{
-  addButton.disabled= false;
-  addButton.textContent="Написать";
-});
+})
 renderCommentList();
 }
 addButton.addEventListener('click', () => {
