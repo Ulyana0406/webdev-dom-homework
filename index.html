@@ -75,17 +75,25 @@
 
       let comments =[]
       
-      function getCommentList(){
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
-  method: "GET"
-});
+const startAt=Date.now();
+console.log('Начинаем делать запрос')
 
-fetchPromise.then((response) => {
-const jsonPromise = response.json();
-
-// Подписываемся на результат преобразования
-jsonPromise.then((responseData) => {
+addButton.disabled= true;
+addButton.textContent="Элемент добавляется...";
+function getCommentList(){
+   
+     fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
+        method: "GET"
+      }).then((response) => {
+return response.json();
+})
+.then((response)=>{
+  console.log('Время:'+ (Date.now()-startAt));
+  return response;
+})
+.then((responseData) => {
 console.log (responseData);
+
 const appComments= responseData.comments.map((comment) =>{
 return{
 date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
@@ -93,18 +101,14 @@ likes:comment.likes,
 isLiked: false,
 text: comment.text,
 name: comment.author.name,
-
-    };
-  });
+};
+});
 comments= appComments;
 renderCommentList();
-  });
-   });
+})
+
 }
 getCommentList()
-
-
-
 
       const sanitizeHtml= (htmlString)=>{
         return htmlString
@@ -115,8 +119,7 @@ getCommentList()
         };
         getCommentList();
       function addComment() {
-
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
+     fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
 method: "POST",
 body: JSON.stringify({
 date: new Date(),
@@ -124,14 +127,25 @@ likes:0,
 isLiked: false,
 text: sanitizeHtml(commentInput.value),
 name: sanitizeHtml(nameInput.value),
-}),
+})
 }).then((response)=>{
-response.json().then((responseData)=>{
+return response.json();
+})
+.then((response)=>{
+  console.log('Время:'+ (Date.now()-startAt));
+  return response;
+})
+.then((responseData)=>{
 getCommentList();
-});
+})
+.then((response)=>{
+  console.log('Время:'+ (Date.now()-startAt));
+  return response;
+}).then((data)=>{
+  addButton.disabled= false;
+  addButton.textContent="Написать";
 });
 renderCommentList();
-
 }
 addButton.addEventListener('click', () => {
           addComment()
@@ -140,30 +154,6 @@ addButton.addEventListener('click', () => {
           commentInput.value = ''
           addButton.classList.add('add-form-button_disable')
       })    
-      // переводим список комментов в массив
-      //const commentsList = [
-         // {
-            // userName: 'Глеб Фокин',
-             //currDate: '12.02.22 12:18',
-             // likeCounter: 3,
-             //isLike: false,
-             //commentText: 'Это будет первый комментарий на этой странице',
-             // isEdit: false,
-        // } ,
-         // {
-              //userName: 'Варвара Н.',
-              //currDate: '13.02.22 19:22',
-              //likeCounter: 75,
-              //isLike: false,
-              //commentText: 'Мне нравится как оформлена эта страница! ❤',
-             // isEdit: false,
-         // }
-    //  ]
-
-
-      //ВСЕ ЧТО СВЯЗАНО С РЕНДЕРОМ И СОЗДАНИЕМ КОЛЛЕКЦИЙ В ДИНАМИЧЕСКИХ ЭЛЕМЕНТАХ
-
-      // рендерим наш массив в HTML
      
       // Функция создания ответа на комментарий
       const initCommentAnswerListeners = () => {
