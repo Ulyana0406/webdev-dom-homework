@@ -11,7 +11,10 @@
       <ul id="comments-box" class="comments">
        
       </ul>
-      <div class="add-form">
+      <div id="comment-render">
+        <p>Комментарий добавляется...</p>
+      </div>
+      <div class="add-form" id="add-form-disable">
         <input id="name-input"
           type="text"
           class="add-form-name"
@@ -25,6 +28,7 @@
           rows="4"
           value=""
         ></textarea>
+        
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
@@ -39,6 +43,7 @@
       const commentInput = document.querySelector('#comment-input')
       const addButton = document.querySelector('#add-button')
       const commentsBox = document.querySelector('#comments-box')
+     
       //const currentTime = new Date();
       //const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
       const renderCommentList = () => {
@@ -81,7 +86,8 @@ console.log('Начинаем делать запрос')
 
 function getCommentList(){
   addButton.disabled= true;
-   addButton.textContent="Элемент добавляется...";
+  addButton.textContent="Элемент добавляется...";
+
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
         method: "GET"
       }).then((response) => {
@@ -90,6 +96,7 @@ return response.json();
 .then((response)=>{
   console.log('Время:'+ (Date.now()-startAt));
   return response;
+  
 })
 .then((responseData) => {
 console.log (responseData);
@@ -108,10 +115,13 @@ renderCommentList();
 }).then((data)=>{
   addButton.disabled= false;
   addButton.textContent="Написать";
+  document.getElementById('comment-render').style.display = 'none';
+    document.getElementById('add-form-disable').style.display = 'flex';
 });
-
 }
+
 getCommentList()
+document.getElementById('comment-render').style.display = 'none'; 
 
       const sanitizeHtml= (htmlString)=>{
         return htmlString
@@ -122,6 +132,9 @@ getCommentList()
         };
         getCommentList();
       function addComment() {
+      document.getElementById('comment-render').style.display = 'flex';
+      document.getElementById('add-form-disable').style.display = 'none';
+
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
 method: "POST",
 body: JSON.stringify({
