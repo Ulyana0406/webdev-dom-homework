@@ -14,6 +14,7 @@
       <div id="comment-render">
         <p>Комментарий добавляется...</p>
       </div>
+      <div class="hidden" id="comments-list-loading"><span>Подождите список загружается...</span></div>
       <div class="add-form" id="add-form-disable">
         <input id="name-input"
           type="text"
@@ -83,24 +84,25 @@
 const startAt=Date.now();
 console.log('Начинаем делать запрос')
 
-
+function showCommentsListLoader(){
+const loader= document.querySelector('#comments-list-loading')
+loader.classList.remove("hidden");
+}
+function hideCommentsListLoader(){
+const loader= document.querySelector('#comments-list-loading')
+loader.classList.add("hidden");
+}
 function getCommentList(){
-  addButton.disabled= true;
-  addButton.textContent="Элемент добавляется...";
-
+  //addButton.disabled= true;
+  //addButton.textContent="Элемент добавляется...";
+  showCommentsListLoader();
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
         method: "GET"
       }).then((response) => {
 return response.json();
 })
-.then((response)=>{
-  console.log('Время:'+ (Date.now()-startAt));
-  return response;
-  
-})
 .then((responseData) => {
 console.log (responseData);
-
 const appComments= responseData.comments.map((comment) =>{
 return{
 date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
@@ -113,11 +115,12 @@ name: comment.author.name,
 comments= appComments;
 renderCommentList();
 }).then((data)=>{
-  addButton.disabled= false;
-  addButton.textContent="Написать";
-  document.getElementById('comment-render').style.display = 'none';
-    document.getElementById('add-form-disable').style.display = 'flex';
-});
+  //addButton.disabled= false;
+  //addButton.textContent="Написать";
+  document.getElementById('add-form-disable').style.display = 'flex';
+}).finally(()=>{
+hideCommentsListLoader()
+})
 }
 
 getCommentList()
@@ -145,11 +148,8 @@ text: sanitizeHtml(commentInput.value),
 name: sanitizeHtml(nameInput.value),
 })
 }).then((response)=>{
+document.getElementById('comment-render').style.display = 'none';
 return response.json();
-})
-.then((response)=>{
-  console.log('Время:'+ (Date.now()-startAt));
-  return response;
 })
 .then((responseData)=>{
 getCommentList();

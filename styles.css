@@ -173,3 +173,8 @@ font-size: 28px;
   margin-right: 103px;
   color: #bcec30;
 }
+
+.hidden{
+  display: none;
+}
+
