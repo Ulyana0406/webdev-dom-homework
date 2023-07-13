@@ -69,11 +69,8 @@
               </li>    
               `
           }).join('')
-          
-
           commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
           
-
           initLikeButtonsListeners();
           initEditButtonsListeners();
           initCommentAnswerListeners();
@@ -85,12 +82,12 @@ const startAt=Date.now();
 console.log('Начинаем делать запрос')
 
 function showCommentsListLoader(){
-const loader= document.querySelector('#comments-list-loading')
-loader.classList.remove("hidden");
+   const loader= document.querySelector('#comments-list-loading')
+   loader.classList.remove("hidden");
 }
 function hideCommentsListLoader(){
-const loader= document.querySelector('#comments-list-loading')
-loader.classList.add("hidden");
+   const loader= document.querySelector('#comments-list-loading')
+   loader.classList.add("hidden");
 }
 function getCommentList(){
   //addButton.disabled= true;
@@ -99,32 +96,33 @@ function getCommentList(){
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
         method: "GET"
       }).then((response) => {
-return response.json();
-})
-.then((responseData) => {
-console.log (responseData);
-const appComments= responseData.comments.map((comment) =>{
-return{
-date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
-likes:comment.likes,
-isLiked: false,
-text: comment.text,
-name: comment.author.name,
-};
-});
-comments= appComments;
-renderCommentList();
-}).then((data)=>{
+        return response.json();
+          })
+           .then((responseData) => {
+            console.log (responseData);
+            const appComments= responseData.comments.map((comment) =>{
+              return{
+                   date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
+                   likes:comment.likes,
+                   isLiked: false,
+                   text: comment.text,
+                   name: comment.author.name,
+                  };
+                });
+           comments= appComments;
+           renderCommentList();
+        }).then((data)=>{
   //addButton.disabled= false;
   //addButton.textContent="Написать";
-  document.getElementById('add-form-disable').style.display = 'flex';
-}).finally(()=>{
+    document.getElementById('add-form-disable').style.display = 'flex';
+    }).finally(()=>{
 hideCommentsListLoader()
 })
 }
 
 getCommentList()
 document.getElementById('comment-render').style.display = 'none'; 
+
 
       const sanitizeHtml= (htmlString)=>{
         return htmlString
@@ -134,39 +132,38 @@ document.getElementById('comment-render').style.display = 'none';
         .replaceAll('"', "&quot;");
         };
         getCommentList();
-      function addComment() {
+
+
+function addComment() {
       document.getElementById('comment-render').style.display = 'flex';
       document.getElementById('add-form-disable').style.display = 'none';
 
      fetch("https://wedev-api.sky.pro/api/v1/uliana-ustinova/comments", {
-method: "POST",
-body: JSON.stringify({
-date: new Date(),
-likes:0,
-isLiked: false,
-text: sanitizeHtml(commentInput.value),
-name: sanitizeHtml(nameInput.value),
-})
-}).then((response)=>{
-document.getElementById('comment-render').style.display = 'none';
-return response.json();
-})
-.then((responseData)=>{
-getCommentList();
-})
-.then((response)=>{
-  console.log('Время:'+ (Date.now()-startAt));
-  return response;
-})
-renderCommentList();
-}
-addButton.addEventListener('click', () => {
+          method: "POST",
+          body: JSON.stringify({
+          date: new Date(),
+          likes:0,
+          isLiked: false,
+          text: sanitizeHtml(commentInput.value),
+          name: sanitizeHtml(nameInput.value),
+      })
+       }).then((response)=>{
+          document.getElementById('comment-render').style.display = 'none';
+          return response.json();
+            })
+              .then((responseData)=>{
+                getCommentList();
+                })
+                  renderCommentList();
+                  };
+         
+  addButton.addEventListener('click', () => {
           addComment()
           renderCommentList()
           nameInput.value = ''
           commentInput.value = ''
           addButton.classList.add('add-form-button_disable')
-      })    
+})    
      
       // Функция создания ответа на комментарий
       const initCommentAnswerListeners = () => {
