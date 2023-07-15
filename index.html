@@ -155,6 +155,8 @@
                    if (response.status===201) {
                   document.getElementById('comment-render').style.display = 'none';
                   return response.json();
+                       }if(response.status === 400){
+                       throw new Error('Количество символов в сообщении должно быть больше 3')
                        } else {
                        throw new Error ("Сервер упал");
                        };
@@ -164,6 +166,7 @@
                             nameInput.value = ''
                             commentInput.value = ''
                                     }).catch((error)=>{
+                                    alert(error.message)
                                     alert("Кажется что-то пошло не так, попробуйте позже");
                                     console.warn(error);
                                     });
