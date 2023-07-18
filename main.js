@@ -1,43 +1,16 @@
 import { getComments } from "./api.js"
 import { postComments } from "./api.js"
+import { renderCommentList} from "./renderComments.js"
+
+
 const nameInput = document.querySelector('#name-input')
 const commentInput = document.querySelector('#comment-input')
 const addButton = document.querySelector('#add-button')
-const commentsBox = document.querySelector('#comments-box')
+
 
 //const currentTime = new Date();
 //const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
-const renderCommentList = () => {
-const commentsHtml = comments.map((comment, index) => {
-  return `<li class="comment">
-       <div class="comment-header">
-       <div>${comment.name}</div>
-       <div>${comment.date}</div>
-       </div>
-            <div class="comment-body">
-            <div data-answer='${index}' class="comment-text">
-            ${(comment.isEdit) ? `<textarea class="comment-edit">${comment.text}</textarea>` : `${comment.text}` }
-            </div>
-                  <button id='edit-button' data-index='${index}' class="add-edit-button">${comment.isEdit ? `Сохранить` : 'Редактировать'}</button>
-                   </div>
-                          <div class="comment-footer">
-                          <div class="likes">
-                          <span class="likes-counter">${comment.likes}</span>
-                          <button data-like='${index}' class="like-button ${(comment.isLiked) ? `-active-like` : ''}"></button>
-                          </div>
-                          </div>
-   </li>
-`
-}).join('')
 
-
-commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
-
-
-initLikeButtonsListeners();
-initEditButtonsListeners();
-initCommentAnswerListeners();
-}
 
 let comments =[]
 
@@ -70,7 +43,7 @@ function getCommentList(){
                 };
               });
                 comments= appComments;
-                renderCommentList();
+                renderCommentList({comments,  initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
                         }).then(()=>{
                         //addButton.disabled= false;
                         //addButton.textContent="Написать";
@@ -112,7 +85,7 @@ name: sanitizeHtml(nameInput.value)
                    };
                        }).then(()=>{
                         getCommentList();
-                        renderCommentList();
+                        renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
                         nameInput.value = ''
                         commentInput.value = ''
                                 }).catch((error)=>{
@@ -125,7 +98,7 @@ name: sanitizeHtml(nameInput.value)
 
 addButton.addEventListener('click', () => {
 addComment()
-renderCommentList()
+renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners})
 nameInput.value = ''
 commentInput.value = ''
 addButton.classList.add('add-form-button_disable')
@@ -159,7 +132,7 @@ comments[index].likes -= 1
 
 }
 
-renderCommentList()
+renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners})
 })
 })
 }
@@ -182,13 +155,13 @@ comments[index].text = "Комментарий не может быть пуст
 comments[index].isEdit = true
 }
 
-renderCommentList();
+renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
 })
 })
 }
 
 //РЕНДЕРИМ НАШ СПИСОК КОММЕНТАРИЕВ
-renderCommentList();
+renderCommentList({comments,  initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
 
 //ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ НА СТАТИЧЕСКИХ ЭЛЕМЕНТАХ
 
@@ -202,13 +175,14 @@ addButton.classList.add('add-form-button_disable')
 }
 
 // функция подправки времени.
-function fullTime(number) {
-if (String(number).length < 2) {
-return number = `0${number}`
-} else {
-return number = number
-}
-}
+//function fullTime(number) {
+//if (String(number).length < 2) {
+//return number = `0${number}`
+//} else {
+//return number = number
+//}
+//}
+
 // Перекрашиваем поле и включаем/отлючаем кнопку в инпуте имени
 nameInput.addEventListener('input', () => {
 disableBtn()
