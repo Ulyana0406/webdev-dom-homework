@@ -1,7 +1,10 @@
 import { getComments } from "./api.js"
 import { postComments } from "./api.js"
 import { renderCommentList} from "./renderComments.js"
-
+import { sanitizeHtml } from "./sanitizeHtml.js"
+import { initCommentAnswerListeners } from "./renderComments.js"
+import { initEditButtonsListeners } from "./renderComments.js"
+import { initLikeButtonsListeners } from "./renderComments.js"
 
 const nameInput = document.querySelector('#name-input')
 const commentInput = document.querySelector('#comment-input')
@@ -57,16 +60,6 @@ function getCommentList(){
 getCommentList()
 document.getElementById('comment-render').style.display = 'none';
 
-const sanitizeHtml= (htmlString)=>{
-return htmlString
-.replaceAll("&", "&amp;")
-.replaceAll("<", "&lt;")
-.replaceAll(">", "&gt;")
-.replaceAll('"', "&quot;");
-};
-getCommentList();
-
-
 function addComment() {
 document.getElementById('comment-render').style.display = 'flex';
 document.getElementById('add-form-disable').style.display = 'none';
@@ -104,61 +97,13 @@ commentInput.value = ''
 addButton.classList.add('add-form-button_disable')
 })
 // Функция создания ответа на комментарий
-const initCommentAnswerListeners = () => {
-const commentAnswer = document.querySelectorAll(".comment-text")
-commentAnswer.forEach((answer, index) => {
-answer.addEventListener('click', () => {
-if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
-commentInput.value = `→${comments[index].userName}
 
-${comment[index].text}←
-`
-}
-})
-})
-}
 
 // Функция создания коллекции и навешивания ивентов на все кнопки Like
-const initLikeButtonsListeners = () => {
-const likeButtons = document.querySelectorAll('.like-button')
-likeButtons.forEach((likeButton, index) => {
-likeButton.addEventListener('click', () => {
-if (comments[index].isLiked === false ) {
-comments[index].isLiked = true;
-comments[index].likes += 1
-} else {
-comments[index].isLiked = false;
-comments[index].likes -= 1
 
-}
-
-renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners})
-})
-})
-}
 //Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
 // Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
-const initEditButtonsListeners = () => {
-const editButtons = document.querySelectorAll('.add-edit-button')
-editButtons.forEach((editButton, index) => {
-editButton.addEventListener('click', () => {
-const editCommentText = document.querySelector('.comment-edit')
-if (comments[index].isEdit) {
-if (!editCommentText.value == '') {
-comments[index].isEdit = false
-comments[index].text = editCommentText.value
-} else {
-comments[index].isEdit = false
-comments[index].text = "Комментарий не может быть пустым"
-}
-} else {
-comments[index].isEdit = true
-}
 
-renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
-})
-})
-}
 
 //РЕНДЕРИМ НАШ СПИСОК КОММЕНТАРИЕВ
 renderCommentList({comments,  initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});

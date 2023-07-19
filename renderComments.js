@@ -1,3 +1,4 @@
+
 const commentsBox = document.querySelector('#comments-box')
 export const renderCommentList = ({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners}) => {
     const commentsHtml = comments.map((comment, index) => {
@@ -24,9 +25,64 @@ export const renderCommentList = ({comments, initLikeButtonsListeners, initComme
     
     
     commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
-    
-    
+  
     initLikeButtonsListeners();
     initEditButtonsListeners();
     initCommentAnswerListeners();
     }
+
+    export const initCommentAnswerListeners = (comments) => {
+     const commentAnswer = document.querySelectorAll(".comment-text")
+     commentAnswer.forEach((answer, index) => {
+     answer.addEventListener('click', () => {
+     if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
+     commentInput.value = `→${comments[index].userName}
+     
+     ${comment[index].text}←
+     `
+     }
+     })
+     })
+     }
+
+    export const initLikeButtonsListeners = (comments) => {
+          const likeButtons = document.querySelectorAll('.like-button')
+          likeButtons.forEach((likeButton, index) => {
+          likeButton.addEventListener('click', () => {
+          if (comments[index].isLiked === false ) {
+          comments[index].isLiked = true;
+          comments[index].likes += 1
+          } else {
+          comments[index].isLiked = false;
+          comments[index].likes -= 1
+          
+          }
+          
+          renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners})
+          })
+          })
+          }
+
+      export  const initEditButtonsListeners = (comments) => {
+               const editButtons = document.querySelectorAll('.add-edit-button')
+               editButtons.forEach((editButton, index) => {
+               editButton.addEventListener('click', () => {
+               const editCommentText = document.querySelector('.comment-edit')
+               if (comments[index].isEdit) {
+               if (!editCommentText.value == '') {
+               comments[index].isEdit = false
+               comments[index].text = editCommentText.value
+               } else {
+               comments[index].isEdit = false
+               comments[index].text = "Комментарий не может быть пустым"
+               }
+               } else {
+               comments[index].isEdit = true
+               }
+               
+               renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
+               })
+               })
+               }
+
+ 
