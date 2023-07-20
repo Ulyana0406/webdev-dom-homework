@@ -17,6 +17,7 @@ const addButton = document.querySelector('#add-button')
 
 let comments =[]
 
+ 
 const startAt=Date.now();
 console.log('Начинаем делать запрос')
 

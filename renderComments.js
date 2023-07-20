@@ -1,5 +1,7 @@
 
 const commentsBox = document.querySelector('#comments-box')
+const commentInput = document.querySelector('#comment-input')
+
 export const renderCommentList = ({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners}) => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
@@ -26,8 +28,8 @@ export const renderCommentList = ({comments, initLikeButtonsListeners, initComme
     
     commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
   
-    initLikeButtonsListeners();
-    initEditButtonsListeners();
+    initLikeButtonsListeners(comments);
+    initEditButtonsListeners(comments);
     initCommentAnswerListeners();
     }
 
