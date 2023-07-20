@@ -33,7 +33,7 @@ export const renderCommentList = ({comments, initLikeButtonsListeners, initComme
     initCommentAnswerListeners();
     }
 
-    export const initCommentAnswerListeners = (comments) => {
+    export const initCommentAnswerListeners = (comments, commentInput) => {
      const commentAnswer = document.querySelectorAll(".comment-text")
      commentAnswer.forEach((answer, index) => {
      answer.addEventListener('click', () => {

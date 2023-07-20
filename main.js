@@ -16,7 +16,18 @@ const addButton = document.querySelector('#add-button')
 
 
 let comments =[]
-
+export const initAnsverEvent = ({ listElementData, commentTextareaElement, listElement, initLikeEvent, initRedactorEvent, initDeleteEvent, enterComment, nameInputElement, renderListElement }) => {
+    for (const comment of document.querySelectorAll('.comments')) {
+    comment.addEventListener('click', () => {
+    const index = comment.dataset.index;
+    const commentText = `${listElementData[index].name}: "${listElementData[index].comment}"`;
+    
+    commentTextareaElement.value = `QUOTE_BEGIN ${commentText} QUOTE_END`;
+    
+    renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
+    })
+    }
+    }
  
 const startAt=Date.now();
 console.log('Начинаем делать запрос')
