@@ -30,18 +30,16 @@ export const renderCommentList = ({comments, initLikeButtonsListeners, initComme
   
     initLikeButtonsListeners(comments);
     initEditButtonsListeners(comments);
-    initCommentAnswerListeners();
-    }
+    initCommentAnswerListeners(comments);
+    };
 
-    export const initCommentAnswerListeners = (comments, commentInput) => {
+    export const initCommentAnswerListeners = (comments) => {
      const commentAnswer = document.querySelectorAll(".comment-text")
      commentAnswer.forEach((answer, index) => {
-     answer.addEventListener('click', () => {
+     answer.addEventListener("click", () => {
      if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
-     commentInput.value = `→${comments[index].userName}
-     
-     ${comment[index].text}←
-     `
+     commentInput.value = `→${comments[index].name}
+     ${comments[index].text}←`;
      }
      })
      })
