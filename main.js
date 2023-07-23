@@ -5,17 +5,39 @@ import { sanitizeHtml } from "./sanitizeHtml.js"
 import { initCommentAnswerListeners } from "./renderComments.js"
 import { initEditButtonsListeners } from "./renderComments.js"
 import { initLikeButtonsListeners } from "./renderComments.js"
+import { loginPageRender } from "./loginPage.js"
+import { setToken } from "./api.js"
+import { renderApp } from "./renderApp.js"
+import { checkToken } from "./checkToken.js"
 
-const nameInput = document.querySelector('#name-input')
-const commentInput = document.querySelector('#comment-input')
-const addButton = document.querySelector('#add-button')
+export const nameInput = document.querySelector('#name-input')
+export const commentInput = document.querySelector('#comment-input')
+export const addButton = document.querySelector('#add-button')
+export const commentsBox = document.querySelector('#comments-box')
+export const loadingCommentsBox = document.querySelector('#loading-comments')
+export const loadingHeadBox = document.querySelector('#loading-head')
+export const inputsBox = document.querySelector('.add-form')
+export const linkRow = document.querySelector('#login-row')
 
 
+
+
+export let comments = []
 //const currentTime = new Date();
 //const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
 
+export let isLoadingToComments = false
+export let isLoadingToStartApp = true
 
-let comments =[]
+//переменная показывающая авторизован ли пользователь
+export let isLogin = false
+
+//функция для измения статуса из других модулей
+export const setIsLogin = (newValue) => {
+    isLogin = newValue
+}
+
+
 export const initAnsverEvent = ({ listElementData, commentTextareaElement, listElement, initLikeEvent, initRedactorEvent, initDeleteEvent, enterComment, nameInputElement, renderListElement }) => {
     for (const comment of document.querySelectorAll('.comments')) {
     comment.addEventListener('click', () => {
@@ -40,6 +62,12 @@ function hideCommentsListLoader(){
 const loader= document.querySelector('#comments-list-loading')
 loader.classList.add("hidden");
 }
+
+checkToken(() => {
+  renderApp(isLogin, () => {   
+    getCommentList()
+  })
+})
 
 
 function getCommentList(){
@@ -168,4 +196,11 @@ commentInput.classList.remove('add-form-comment_error')
 }
 })
 
+
+linkRow.addEventListener('click', () => {
+  loginPageRender(() => {
+    getCommentList()
+  })
+})
 //логика кнопки добавления комментария
+
