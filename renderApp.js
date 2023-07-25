@@ -9,7 +9,7 @@ export const renderApp = (boolean, call) => {
     } else {
         inputsBox.classList.add('hidden')
         linkRow.classList.remove('hidden')
-        nameInput.setAttribute("readonly", "readonly")
+        nameInput.setAttribute("readonly", "readonly")        
         call()
     }
 }

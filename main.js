@@ -90,7 +90,7 @@ function getCommentList(){
                         }).then(()=>{
                         //addButton.disabled= false;
                         //addButton.textContent="Написать";
-                        document.getElementById('add-form-disable').style.display = 'flex';
+                        
                             })
                             .finally(()=>{
                             hideCommentsListLoader()
