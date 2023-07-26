@@ -8,7 +8,7 @@ import { initLikeButtonsListeners } from "./renderComments.js"
 import { loginPageRender } from "./loginPage.js"
 import { setToken } from "./api.js"
 import { renderApp } from "./renderApp.js"
-import { checkToken } from "./checkToken.js"
+
 
 export const nameInput = document.querySelector('#name-input')
 export const commentInput = document.querySelector('#comment-input')
@@ -63,11 +63,7 @@ const loader= document.querySelector('#comments-list-loading')
 loader.classList.add("hidden");
 }
 
-checkToken(() => {
-  renderApp(isLogin, () => {   
-    getCommentList()
-  })
-})
+
 
 
 function getCommentList(){
@@ -83,33 +79,31 @@ function getCommentList(){
                       isLiked: false,
                       text: comment.text,
                       name: comment.author.name,
-                };
-              });
+                  };
+                 });
                 comments= appComments;
                 renderCommentList({comments,  initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
                         }).then(()=>{
                         //addButton.disabled= false;
                         //addButton.textContent="Написать";
-                        document.getElementById('add-form-disable').style.display = 'flex';
                             })
                             .finally(()=>{
                             hideCommentsListLoader()
                             })
                       };
 
-getCommentList()
+renderApp(isLogin,()=>{
+  getCommentList()
+})
 document.getElementById('comment-render').style.display = 'none';
 
 function addComment() {
-document.getElementById('comment-render').style.display = 'flex';
-document.getElementById('add-form-disable').style.display = 'none';
 postComments({
 text: sanitizeHtml(commentInput.value),
 name: sanitizeHtml(nameInput.value)
 }).then((response)=>{
            console.log(response);
                if (response.status===201) {
-              document.getElementById('comment-render').style.display = 'none';
               return response.json();
                    }if(response.status === 400){
                    throw new Error('Количество символов в сообщении должно быть больше 3')
@@ -119,7 +113,6 @@ name: sanitizeHtml(nameInput.value)
                        }).then(()=>{
                         getCommentList();
                         renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners});
-                        nameInput.value = ''
                         commentInput.value = ''
                                 }).catch((error)=>{
                                 alert(error.message)
@@ -132,7 +125,6 @@ name: sanitizeHtml(nameInput.value)
 addButton.addEventListener('click', () => {
 addComment()
 renderCommentList({comments, initLikeButtonsListeners, initCommentAnswerListeners, initEditButtonsListeners})
-nameInput.value = ''
 commentInput.value = ''
 addButton.classList.add('add-form-button_disable')
 })
