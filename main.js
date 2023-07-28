@@ -8,7 +8,7 @@ import { initLikeButtonsListeners } from "./renderComments.js"
 import { loginPageRender } from "./loginPage.js"
 import { setToken } from "./api.js"
 import { renderApp } from "./renderApp.js"
-
+import { format } from "date-fns"
 
 export const nameInput = document.querySelector('#name-input')
 export const commentInput = document.querySelector('#comment-input')
@@ -74,7 +74,7 @@ function getCommentList(){
                console.log (responseData);
                       const appComments= responseData.comments.map((comment) =>{
                       return{
-                      date:`${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}` ,
+                      date: format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss"),
                       likes:comment.likes,
                       isLiked: false,
                       text: comment.text,
